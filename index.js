@@ -3,6 +3,9 @@ require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const workoutRoutes = require('./routes/workouts')
+const sourcerecipegroupRoutes = require('./routes/sourcerecipegroups')
+const sourcerecipeRoutes = require('./routes/sourcerecipes')
+const sourceingredientRoutes = require('./routes/sourceingredients')
 const userRoutes = require('./routes/user')
 
 const cors = require("cors");
@@ -29,6 +32,9 @@ app.use((req, res, next) => {
 
 // routes
 app.use('/api/workouts', workoutRoutes)
+app.use('/api/sourcerecipegroups', sourcerecipegroupRoutes)
+app.use('/api/sourcerecipes', sourcerecipeRoutes)
+app.use('/api/sourceingredients', sourceingredientRoutes)
 app.use('/api/user', userRoutes)
 
 // connect to db
