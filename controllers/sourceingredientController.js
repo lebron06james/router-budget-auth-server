@@ -3,9 +3,23 @@ const mongoose = require('mongoose')
 
 // get all sourceingredients
 const getSourceIngredients = async (req, res) => {
-  const sourcerecipe_id = req.query.sourceingredientgroupid
 
-  const sourceingredients = await SourceIngredient.find({sourcerecipe_id}).sort({createdAt: -1})
+  const sourceingredients = await SourceIngredient.find({}).sort({createdAt: -1})
+
+  res.status(200).json(sourceingredients)
+}
+
+// filter sourceingredients by recipeId
+const getSourceIngredientsByRecipeId = async (req, res) => {
+  const { id } = req.params
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({error: 'No such sourcerecipe'})
+  }
+
+  const recipeId = id
+
+  const sourceingredients = await SourceIngredient.find({recipeId}).sort({createdAt: -1})
 
   res.status(200).json(sourceingredients)
 }
@@ -30,7 +44,7 @@ const getSourceIngredient = async (req, res) => {
 
 // create new sourceingredient
 const createSourceIngredient = async (req, res) => {
-  const {name, unit, price, amount, recipeId } = req.body
+  const {name, unit, price, amount, recipeId, recipeName } = req.body
 
   let emptyFields = []
 
@@ -49,6 +63,9 @@ const createSourceIngredient = async (req, res) => {
   if(!recipeId) {
     emptyFields.push('recipeId')
   }
+  if(!recipeName) {
+    emptyFields.push('recipeName')
+  }
   if(emptyFields.length > 0) {
     return res.status(400).json({ error: 'Please fill in all the fields', emptyFields })
   }
@@ -56,7 +73,7 @@ const createSourceIngredient = async (req, res) => {
   // add doc to db
   try {
     const user_id = req.user._id
-    const sourceingredient = await SourceIngredient.create({name, unit, price, amount, recipeId, createdBy: user_id})
+    const sourceingredient = await SourceIngredient.create({name, unit, price, amount, recipeId, recipeName, createdBy: user_id})
     res.status(200).json(sourceingredient)
   } catch (error) {
     res.status(400).json({error: error.message})
@@ -102,6 +119,7 @@ const updateSourceIngredient = async (req, res) => {
 
 module.exports = {
   getSourceIngredients,
+  getSourceIngredientsByRecipeId,
   getSourceIngredient,
   createSourceIngredient,
   deleteSourceIngredient,

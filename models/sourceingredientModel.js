@@ -23,6 +23,10 @@ const sourceingredientSchema = new Schema({
     type: String,
     required: true
   },
+  recipeName: {
+    type: String,
+    required: true
+  },
   createdBy: {
     type: String,
     required: true

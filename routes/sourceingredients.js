@@ -2,6 +2,7 @@ const express = require('express')
 const {
   createSourceIngredient,
   getSourceIngredients,
+  getSourceIngredientsByRecipeId,
   getSourceIngredient,
   deleteSourceIngredient,
   updateSourceIngredient
@@ -15,6 +16,9 @@ router.use(requireAuth)
 
 // GET all sourcerecipegroups
 router.get('/', getSourceIngredients)
+
+//FILTER sourceingredient by recipeId
+router.get('/filter/:id', getSourceIngredientsByRecipeId)
 
 //GET a single sourceingredient
 router.get('/:id', getSourceIngredient)

@@ -3,9 +3,23 @@ const mongoose = require('mongoose')
 
 // get all sourcerecipes
 const getSourceRecipes = async (req, res) => {
-  const sourcerecipegroup_id = req.query.sourcerecipegroupid
 
-  const sourcerecipes = await SourceRecipe.find({sourcerecipegroup_id}).sort({createdAt: -1})
+  const sourcerecipes = await SourceRecipe.find({}).sort({name: -1})
+
+  res.status(200).json(sourcerecipes)
+}
+
+// filter sourcerecipes by recipegroupId
+const getSourceRecipesByRecipeGroupId = async (req, res) => {
+  const { id } = req.params
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({error: 'No such sourcerecipegroup'})
+  }
+  
+  const recipegroupId = id
+
+  const sourcerecipes = await SourceRecipe.find({recipegroupId}).sort({createdAt: -1})
 
   res.status(200).json(sourcerecipes)
 }
@@ -30,7 +44,7 @@ const getSourceRecipe = async (req, res) => {
 
 // create new sourcerecipe
 const createSourceRecipe = async (req, res) => {
-  const {name, amount, serving, instruction, cookingtime, color, recipegroupId } = req.body
+  const {name, amount, serving, instruction, cookingtime, color, recipegroupId, recipegroupName } = req.body
 
   let emptyFields = []
 
@@ -55,6 +69,9 @@ const createSourceRecipe = async (req, res) => {
   if(!recipegroupId) {
     emptyFields.push('recipegroupId')
   }
+  if(!recipegroupName) {
+    emptyFields.push('recipegroupName')
+  }
   if(emptyFields.length > 0) {
     return res.status(400).json({ error: 'Please fill in all the fields', emptyFields })
   }
@@ -62,7 +79,7 @@ const createSourceRecipe = async (req, res) => {
   // add doc to db
   try {
     const user_id = req.user._id
-    const sourcerecipe = await SourceRecipe.create({name, amount, serving, instruction, cookingtime, color, recipegroupId, createdBy: user_id})
+    const sourcerecipe = await SourceRecipe.create({name, amount, serving, instruction, cookingtime, color, recipegroupId, recipegroupName, createdBy: user_id})
     res.status(200).json(sourcerecipe)
   } catch (error) {
     res.status(400).json({error: error.message})
@@ -108,6 +125,7 @@ const updateSourceRecipe = async (req, res) => {
 
 module.exports = {
   getSourceRecipes,
+  getSourceRecipesByRecipeGroupId,
   getSourceRecipe,
   createSourceRecipe,
   deleteSourceRecipe,

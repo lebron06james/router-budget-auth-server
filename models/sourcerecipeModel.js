@@ -32,6 +32,10 @@ const sourcerecipeSchema = new Schema({
     type: String,
     required: true
   },
+  recipegroupName: {
+    type: String,
+    required: true
+  },
   createdBy: {
     type: String,
     required: true
