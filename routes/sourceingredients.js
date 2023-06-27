@@ -3,6 +3,7 @@ const {
   createSourceIngredient,
   getSourceIngredients,
   getSourceIngredientsByRecipeId,
+  getSourceIngredientsByRecipeGroupId,
   getSourceIngredient,
   deleteSourceIngredient,
   updateSourceIngredient
@@ -19,6 +20,9 @@ router.get('/', getSourceIngredients)
 
 //FILTER sourceingredient by recipeId
 router.get('/filter/:id', getSourceIngredientsByRecipeId)
+
+//FILTER MORE sourceingredient by recipegroupId
+router.get('/groupfilter/:id', getSourceIngredientsByRecipeId)
 
 //GET a single sourceingredient
 router.get('/:id', getSourceIngredient)
