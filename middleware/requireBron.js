@@ -18,9 +18,9 @@ const requireBron = async (req, res, next) => {
 
     req.user = await User.findOne({ _id }).select("_id");
 
-    username = await User.findOne({ _id }).select("username");
+    const _user = await User.findOne({ _id }).select("username");
 
-    if (username !== "LeBron") {
+    if (_user.username !== "LeBron") {
       return res.status(401).json({ error: "Nice try motherfucker!" });
     }
 

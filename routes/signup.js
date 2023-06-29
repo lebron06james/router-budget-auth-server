@@ -11,7 +11,7 @@ const router = express.Router()
 router.use(requireBron)
 
 // signup route
-router.post('/signup', signupUser)
+router.post('/create', signupUser)
 
 module.exports = router
 
