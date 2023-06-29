@@ -72,6 +72,7 @@ const createSourceIngredient = async (req, res) => {
     recipeName,
     recipegroupId,
     recipegroupName,
+    ingredientSqlId,
   } = req.body;
 
   let emptyFields = [];
@@ -100,6 +101,9 @@ const createSourceIngredient = async (req, res) => {
   if (!recipegroupName) {
     emptyFields.push("recipegroupName");
   }
+  if (!ingredientSqlId) {
+    emptyFields.push("ingredientSqlId");
+  }
   if (emptyFields.length > 0) {
     return res
       .status(400)
@@ -118,6 +122,7 @@ const createSourceIngredient = async (req, res) => {
       recipeName,
       recipegroupId,
       recipegroupName,
+      ingredientSqlId,
       createdBy: user_id,
     });
     res.status(200).json(sourceingredient);

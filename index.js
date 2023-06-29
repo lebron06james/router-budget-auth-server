@@ -7,6 +7,7 @@ const sourcerecipegroupRoutes = require('./routes/sourcerecipegroups')
 const sourcerecipeRoutes = require('./routes/sourcerecipes')
 const sourceingredientRoutes = require('./routes/sourceingredients')
 const userRoutes = require('./routes/user')
+const userSignup = require('./routes/signup')
 
 const cors = require("cors");
 
@@ -36,6 +37,7 @@ app.use('/api/sourcerecipegroups', sourcerecipegroupRoutes)
 app.use('/api/sourcerecipes', sourcerecipeRoutes)
 app.use('/api/sourceingredients', sourceingredientRoutes)
 app.use('/api/user', userRoutes)
+app.use('/api/signup', userSignup)
 
 // connect to db
 mongoose.connect(process.env.MONGO_URI)

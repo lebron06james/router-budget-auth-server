@@ -1,14 +1,20 @@
 const express = require('express')
 
 // controller functions
-const { loginUser } = require('../controllers/userController')
+const { signupUser } = require('../controllers/userController')
+
+const requireBron = require('../middleware/requireBron')
 
 const router = express.Router()
 
-// login route
-router.post('/login', loginUser)
+// require auth for user signup route
+router.use(requireBron)
+
+// signup route
+router.post('/signup', signupUser)
 
 module.exports = router
+
 
 // orig
 // const express = require('express')

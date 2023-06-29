@@ -35,6 +35,10 @@ const sourceingredientSchema = new Schema({
     type: String,
     required: true
   },
+  ingredientSqlId: {
+    type: String,
+    required: true
+  },
   createdBy: {
     type: String,
     required: true
