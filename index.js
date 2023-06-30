@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 })
 
 // routes
-app.use('/api/workouts', workoutRoutes)
+// app.use('/api/workouts', workoutRoutes)
 app.use('/api/sourcerecipegroups', sourcerecipegroupRoutes)
 app.use('/api/sourcerecipes', sourcerecipeRoutes)
 app.use('/api/sourceingredients', sourceingredientRoutes)

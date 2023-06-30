@@ -8,29 +8,42 @@ const {
   updateSourceRecipe
 } = require('../controllers/sourcerecipeController')
 const requireAuth = require('../middleware/requireAuth')
+const requireChef = require('../middleware/requireChef')
 
 const router = express.Router()
 
 // require auth for all sourcerecipe routes
-router.use(requireAuth)
+// router.use(requireAuth)
 
 // GET all sourcerecipegroups
-router.get('/', getSourceRecipes)
+router.get('/', requireAuth, (req, res) => {
+  getSourceRecipes(req, res)
+})
 
 //FILTER sourcerecipe by recipegroupId
-router.get('/filter/:id', getSourceRecipesByRecipeGroupId)
+router.get('/filter/:id', requireAuth, (req, res) => {
+  getSourceRecipesByRecipeGroupId(req, res)
+})
 
 //GET a single sourcerecipe
-router.get('/:id', getSourceRecipe)
+router.get('/:id', requireAuth, (req, res) => {
+  getSourceRecipe(req, res)
+})
 
 // POST a new sourcerecipe
-router.post('/', createSourceRecipe)
+router.post('/', requireChef, (req, res) => {
+  createSourceRecipe(req, res)
+})
 
 // DELETE a sourcerecipe
-router.delete('/:id', deleteSourceRecipe)
+router.delete('/:id', requireChef, (req, res) => {
+  deleteSourceRecipe(req, res)
+})
 
 // UPDATE a sourcerecipe
-router.patch('/:id', updateSourceRecipe)
+router.patch('/:id', requireChef, (req, res) => {
+  updateSourceRecipe(req, res)
+})
 
 
 module.exports = router
