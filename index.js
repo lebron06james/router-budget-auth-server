@@ -130,6 +130,66 @@ app.use(flash());
 // Middleware of parsing URL-encoded form data, for getting username and password
 app.use(express.urlencoded({ extended: true }));
 
+//// -----------------------------------
+// TEST
+
+app.post("/new", async (req, res) => {
+  try {
+    req.session.isAuth = true;
+    // in prod use data from mongo user.username value
+    req.session.userName = req.body.name;
+    req.session.timestamps = [];
+    // in prod use data from mongo user object except -password
+    req.session.user = {
+      email: "a@a.com",
+      username: req.body.name,
+      usertype: "Chef",
+      token: "tokenmo",
+    };
+
+    const response = {
+      isAuth: req.session.isAuth,
+      userName: req.session.user.username,
+      user: req.session.user,
+    };
+
+    res.send(response);
+  } catch (error) {
+    console.log(error);
+    // res.status(404);
+    res.send(error);
+  }
+});
+
+app.get("/name", checkIsAuthAndAddTimestamp, async (req, res) => {
+  try {
+    const { isAuth, user, userName, timestamps } = req.session;
+    const response = {
+      isAuth: isAuth,
+      userName: userName,
+      user: user,
+      timestamps: timestamps,
+    };
+    res.send(response);
+  } catch (error) {
+    console.log(error);
+    // res.status(403);
+    res.send(error);
+  }
+});
+
+app.get("/logout", function (req, res) {
+  // Clearing the cookie
+  res.clearCookie("connect.sid");
+
+  console.log("Cookie cleared");
+  res.send("logout success!");
+  res.end();
+});
+
+// END TEST
+//// -----------------------------------
+
 // web routes
 app.use("/api/sourcerecipegroups", sourcerecipegroupRoutes);
 app.use("/api/sourcerecipes", sourcerecipeRoutes);
