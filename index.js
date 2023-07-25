@@ -161,6 +161,8 @@ app.post("/new", async (req, res) => {
   }
 });
 
+const checkIsAuthAndAddTimestamp = require('./middleware/requireSession')
+
 app.get("/name", checkIsAuthAndAddTimestamp, async (req, res) => {
   try {
     const { isAuth, user, userName, timestamps } = req.session;
