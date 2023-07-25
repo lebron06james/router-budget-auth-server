@@ -1,0 +1,112 @@
+
+Node
+
+remove
+
+res.set('Access-Control-Allow-Origin', '*');
+
+Inside userController
+
+const loginUser = async (req, res) => {}
+
+and
+
+const signupUser = async (req, res) => {}
+
+And add next inside function parameters
+
+const loginUser = async (req, res, next) => {}
+
+In .env and .env.example
+
+SESSION_SECRET=thesecret
+
+REMOTE_REDIS_URL=
+
+LOCAL_REDIS_URL=redis://default:thepassword@localhost:6379
+
+IS_PROD=Yes
+
+
+in node app.js / server.js / index.js
+
+     const origin = process.env.IS_PROD === 'Yes' ? ['prod', 'origins', 'only'] : ['dev', 'stage', 'origins'];
+
+     const secure_bool = process.env.IS_PROD === 'Yes';
+
+     app.use(
+        session({
+            store: new RedisStore({ client: redisClient, ttl: 43200}),
+            secret: SECRET, 
+            cookie: {
+               httpOnly: true,
+               secure: secure_bool,
+               sameSite: 'lax',
+                maxAge: 43200000 // 12 hours
+            },
+            resave: false,
+            saveUninitialized: false
+         })
+      )
+
+
+Logout properly
+
+// try on app.post instead of app.get
+
+res.clearCookie('connect.sid');
+req.session.destroy(function (err) {
+			res.send();
+});
+
+
+// node setup redis client and app session
+
+require('dotenv').config();
+const express = require('express');
+const session = require('express-session');
+const redis = require('redis');
+const connectRedis = require('connect-redis');
+
+const app = express();
+const port = 3000;
+
+// Sample Set up Redis client
+const REDIS_URL = process.env.IS_PROD === 'Yes' ? process.env.REMOTE_REDIS_URL : process.env.LOCAL_REDIS_URL;
+
+  const redisClient = redis.createClient({ url: REDIS_URL });
+
+// Sample local redis url with username and password
+  const redisClient = redis.createClient({
+  socket: {
+    host: "localhost",
+    port: 6379
+  }
+  password: "thepassword",
+  username: "default"
+});
+
+or:
+
+const redisClient = redis.createClient({ url: process.env.LOCAL_REDIS_URL });
+
+
+// Handle Redis connection events
+redisClient.on('error', (err) => console.log(`Failed to connect to Redis. ${err}`));
+redisClient.on('connect', () => console.log('Successfully connected to Redis'));
+
+// Set up session store using Redis
+const RedisStore = connectRedis(session);
+
+// Configure the app to use session with RedisStore
+app.use(
+  session({
+    store: new RedisStore({ client: redisClient }),
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+// Start the server
+app.listen(port, () => console.log(`Server is running on port ${port}`));
