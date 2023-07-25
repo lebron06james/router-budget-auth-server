@@ -94,16 +94,14 @@ app.use((req, res, next) => {
 });
 
 // REDIS
-const REDIS_URL = process.env.IS_PROD === 'Yes' ? process.env.REMOTE_REDIS_URL : process.env.LOCAL_REDIS_URL;
-
-// const redisClient = redis.createClient({ url: REDIS_URL });
-
-  const redisClient = redis.createClient({
+const redisClient = process.env.IS_PROD === 'Yes' ? 
+  redis.createClient({ url: process.env.REMOTE_REDIS_URL }) :
+  redis.createClient({
   socket: {
     host: "127.0.0.1",
     port: 6379
   },
-  password: "5I9EN3EayeHDi3rhEYz45ZbwDmiSGYYUkJWawsdmWG3le4o5Si",
+  password: process.env.LOCAL_REDIS_PASS,
   username: "default"
 });
 
