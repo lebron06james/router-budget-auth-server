@@ -5,9 +5,12 @@ const { signupUser } = require('../controllers/userController')
 
 const requireBron = require('../middleware/requireBron')
 
+const checkIsAuthAndAddTimestamp = require('../middleware/requireSession')
+
 const router = express.Router()
 
 // require auth for user signup route
+router.use(checkIsAuthAndAddTimestamp)
 router.use(requireBron)
 
 // signup route

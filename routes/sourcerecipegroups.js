@@ -8,11 +8,12 @@ const {
 } = require('../controllers/sourcerecipegroupController')
 const requireAuth = require('../middleware/requireAuth')
 const requireChef = require('../middleware/requireChef')
+const checkIsAuthAndAddTimestamp = require('../middleware/requireSession')
 
 const router = express.Router()
 
-// require auth for all sourcerecipegroup routes
-// router.use(requireAuth)
+// require auth for all routes
+router.use(checkIsAuthAndAddTimestamp)
 
 // GET all sourcerecipegroups
 router.get('/', requireAuth, (req, res) => {
@@ -38,6 +39,5 @@ router.delete('/:id', requireChef, (req, res) => {
 router.patch('/:id', requireChef, (req, res) => {
   updateSourceRecipeGroup(req, res)
 })
-
 
 module.exports = router

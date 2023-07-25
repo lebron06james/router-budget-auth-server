@@ -6,9 +6,9 @@ const cookieParser = require("cookie-parser");
 const flash = require("connect-flash");
 
 // express session // redis / redis store
-const session = require('express-session');
-const redis = require('redis');
-const connectRedis = require('connect-redis');
+const session = require("express-session");
+const redis = require("redis");
+const connectRedis = require("connect-redis");
 
 // web routes constants
 const sourcerecipegroupRoutes = require("./routes/sourcerecipegroups");
@@ -67,14 +67,7 @@ app.use(express.json());
 // middleware
 app.use((req, res, next) => {
   res.header("Content-Type", "application/json;charset=UTF-8");
-  const allowedOrigins = [
-    "https://recipe-chef.vercel.app",
-    "https://events-menu.vercel.app",
-    "https://stage-chef-recipe.vercel.app",
-    "https://stage-menu-events.vercel.app",
-    "http://127.0.0.1:5173",
-    "http://localhost:5173",
-  ];
+  const allowedOrigins = ORIGIN;
   const origin = req.headers.origin;
   res.setHeader(
     "Access-Control-Allow-Origin",
@@ -94,35 +87,38 @@ app.use((req, res, next) => {
 });
 
 // REDIS
-const redisClient = process.env.IS_PROD === 'Yes' ? 
-  redis.createClient({ url: process.env.REMOTE_REDIS_URL }) :
-  redis.createClient({
-  socket: {
-    host: "127.0.0.1",
-    port: 6379
-  },
-  password: process.env.LOCAL_REDIS_PASS,
-  username: "default"
-});
+const redisClient =
+  process.env.IS_PROD === "Yes" || process.env.IS_PROD === "Stage"
+    ? redis.createClient({ url: process.env.REMOTE_REDIS_URL })
+    : redis.createClient({
+        socket: {
+          host: "127.0.0.1",
+          port: 6379,
+        },
+        password: process.env.LOCAL_REDIS_PASS,
+        username: "default",
+      });
 
 // // Set up session store using Redis
 const RedisStore = connectRedis(session);
 
 // // Handle Redis connection events
-redisClient.on('error', (err) => console.log(`Failed to connect to Redis. ${err}`));
-redisClient.on('connect', () => console.log('Successfully connected to Redis'));
+redisClient.on("error", (err) =>
+  console.log(`Failed to connect to Redis. ${err}`)
+);
+redisClient.on("connect", () => console.log("Successfully connected to Redis"));
 
 // session store / cookie
 const secure_bool = process.env.IS_PROD === "Yes";
 app.use(
   session({
-    store: new RedisStore({ client: redisClient }),
+    store: new RedisStore({ client: redisClient, ttl: 43200 }), // seconds 12 hours
     secret: process.env.SESSION_SECRET,
     cookie: {
       httpOnly: true,
       secure: secure_bool,
       sameSite: "lax",
-      maxAge: 43200000, // 12 hours
+      maxAge: 43200000, // milliseconds 12 hours
     },
     resave: false,
     saveUninitialized: false,
@@ -160,7 +156,6 @@ mongoose
   .catch((error) => {
     console.log(error);
   });
-
 
 ////////
 
