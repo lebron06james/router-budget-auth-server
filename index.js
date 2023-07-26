@@ -109,7 +109,7 @@ redisClient.on("error", (err) =>
 redisClient.on("connect", () => console.log("Successfully connected to Redis"));
 
 // session store / cookie
-const secure_bool = process.env.IS_PROD === "Yes";
+const secure_bool = process.env.IS_PROD === "Yes" || process.env.IS_PROD === "Stage";
 app.use(
   session({
     store: new RedisStore({ client: redisClient, ttl: 43200 }), // seconds 12 hours
