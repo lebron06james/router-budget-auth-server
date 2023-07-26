@@ -53,6 +53,8 @@ const ORIGIN = process.env.IS_PROD === "Yes" ? PROD_ORIGINS : DEV_ORIGINS;
 var corsOptions = {
   // origin: "http://localhost:5173",
   origin: ORIGIN,
+  default: "https://stage-chef-recipe.vercel.app",
+  methods: ["POST", "PUT", "PATCH", "GET", "OPTIONS", "DELETE", "UPDATE", "HEAD"],
   credentials: true,
 };
 
@@ -69,10 +71,11 @@ app.use((req, res, next) => {
   res.header("Content-Type", "application/json;charset=UTF-8");
   const allowedOrigins = ORIGIN;
   const origin = req.headers.origin;
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    allowedOrigins.includes(origin) ? origin : "https://recipe-auth.cyclic.app"
-  );
+  // res.setHeader(
+  //   "Access-Control-Allow-Origin",
+  //   allowedOrigins.includes(origin) ? origin : "https://stage-chef-recipe.vercel.app"
+  // );
+  res.header("Access-Control-Allow-Origin", allowedOrigins.includes(origin) ? origin : "https://stage-chef-recipe.vercel.app")
   res.header(
     "Access-Control-Allow-Methods",
     "GET, PUT, POST, PATCH, DELETE, OPTIONS"
@@ -91,13 +94,13 @@ const redisClient =
   process.env.IS_PROD === "Yes" || process.env.IS_PROD === "Stage"
     ? redis.createClient({ url: process.env.REMOTE_REDIS_URL })
     : redis.createClient({
-        socket: {
-          host: "127.0.0.1",
-          port: 6379,
-        },
-        password: process.env.LOCAL_REDIS_PASS,
-        username: "default",
-      });
+      socket: {
+        host: "127.0.0.1",
+        port: 6379,
+      },
+      password: process.env.LOCAL_REDIS_PASS,
+      username: "default",
+    });
 
 // // Set up session store using Redis
 const RedisStore = connectRedis(session);
@@ -117,7 +120,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: secure_bool,
-      sameSite: "lax",
+      sameSite: "none",
       maxAge: 43200000, // milliseconds 12 hours
     },
     resave: false,
@@ -205,8 +208,8 @@ app.get("/logout", function (req, res) {
         res.send({ message: "logout success!" });
       });
     })
-  })  
- 
+  })
+
 });
 
 // END TEST
@@ -255,3 +258,23 @@ mongoose
 //   default: "https://recipe-auth.cyclic.app",
 //   credentials: true,
 // }
+
+// var whitelist = ['http://example1.com', 'http://example2.com']
+// var corsOptions = {
+//   origin: function (origin, callback) {
+//     var originIsWhitelisted = whitelist.indexOf(origin) !== -1
+//     callback(originIsWhitelisted ? null : 'Bad Request', originIsWhitelisted)
+//   }
+// }
+
+// app.get('/products/:id', cors(corsOptions), function (req, res, next) {
+//   res.json({msg: 'This is CORS-enabled for a whitelisted domain.'})
+// })
+
+// origin: function (origin, callback) {
+//   if (!origin || whitelist.indexOf(origin) !== -1) {
+//     callback(null, true)
+//   } else {
+//     callback(new Error('Not allowed by CORS'))
+//   }
+// },
