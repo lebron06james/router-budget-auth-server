@@ -184,6 +184,7 @@ app.get("/logout", function (req, res) {
   // Clearing the cookie
   const userName = req.session.userName;
   res.clearCookie("connect.sid");
+  console.log(`Cookie of ${userName} Cleared.`);
 
   // clear the user from the session object and save.
   // this will ensure that re-using the old session id
@@ -199,15 +200,13 @@ app.get("/logout", function (req, res) {
     req.session.regenerate(function (err) {
       if (err) next(err)
       console.log(`Session regenerated to avoid session fixation.`);
+      req.session.destroy(function (err) {
+        console.log(`Session of ${userName} Destroyed.`);
+        res.send({ message: "logout success!" });
+      });
     })
-  })
-  req.session.destroy(function (err) {
-    console.log(`Session of ${userName} Destroyed.`);
-    // res.send();
-  });
-  console.log(`Cookie of ${userName} Cleared.`);
-  res.send("logout success!");
-  res.end();
+  })  
+ 
 });
 
 // END TEST
