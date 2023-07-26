@@ -2,7 +2,8 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 
 const requireBron = async (req, res, next) => {
-  // res.header({"Access-Control-Allow-Origin": "*"});
+
+  console.log('Tinawag ako. Ako si requireBron.');
 
   // verify user is authenticated
   const { authorization } = req.headers;

@@ -3,7 +3,7 @@ const User = require('../models/userModel')
 
 const requireAuth = async (req, res, next) => {
 
-  // res.header({"Access-Control-Allow-Origin": "*"});
+  console.log('Tinawag ako. Ako si requireAuth.');
 
   // verify user is authenticated
   const { authorization } = req.headers

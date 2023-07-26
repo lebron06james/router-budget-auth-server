@@ -133,35 +133,35 @@ app.use(express.urlencoded({ extended: true }));
 //// -----------------------------------
 // TEST
 
-app.post("/new", async (req, res) => {
-  try {
-    req.session.isAuth = true;
-    // in prod use data from mongo user.username value
-    req.session.userName = req.body.name;
-    req.session.timestamps = [];
-    // in prod use data from mongo user object except -password
-    req.session.user = {
-      email: "a@a.com",
-      username: req.body.name,
-      usertype: "Chef",
-      token: "tokenmo",
-    };
+// app.post("/new", async (req, res) => {
+//   try {
+//     req.session.isAuth = true;
+//     // in prod use data from mongo user.username value
+//     req.session.userName = req.body.name;
+//     req.session.timestamps = [];
+//     // in prod use data from mongo user object except -password
+//     req.session.user = {
+//       email: "a@a.com",
+//       username: req.body.name,
+//       usertype: "Chef",
+//       token: "tokenmo",
+//     };
 
-    const response = {
-      isAuth: req.session.isAuth,
-      userName: req.session.user.username,
-      user: req.session.user,
-    };
+//     const response = {
+//       isAuth: req.session.isAuth,
+//       userName: req.session.userName,
+//       user: req.session.user,
+//     };
 
-    res.send(response);
-  } catch (error) {
-    console.log(error);
-    // res.status(404);
-    res.send(error);
-  }
-});
+//     res.send(response);
+//   } catch (error) {
+//     console.log(error);
+//     // res.status(404);
+//     res.send(error);
+//   }
+// });
 
-const checkIsAuthAndAddTimestamp = require('./middleware/requireSession')
+const checkIsAuthAndAddTimestamp = require("./middleware/requireSession");
 
 app.get("/name", checkIsAuthAndAddTimestamp, async (req, res) => {
   try {
@@ -172,19 +172,40 @@ app.get("/name", checkIsAuthAndAddTimestamp, async (req, res) => {
       user: user,
       timestamps: timestamps,
     };
-    res.send(response);
+    res.json(response);
   } catch (error) {
     console.log(error);
-    // res.status(403);
     res.send(error);
+    // res.json({}); // okay
   }
 });
 
 app.get("/logout", function (req, res) {
   // Clearing the cookie
+  const userName = req.session.userName;
   res.clearCookie("connect.sid");
 
-  console.log("Cookie cleared");
+  // clear the user from the session object and save.
+  // this will ensure that re-using the old session id
+  // does not have a logged in user
+  req.session.user = null;
+  req.session.userName = null;
+  req.session.isAuth = null;
+  req.session.save(function (err) {
+    if (err) next(err)
+
+    // regenerate the session, which is good practice to help
+    // guard against forms of session fixation
+    req.session.regenerate(function (err) {
+      if (err) next(err)
+      console.log(`Session regenerated to avoid session fixation.`);
+    })
+  })
+  req.session.destroy(function (err) {
+    console.log(`Session of ${userName} Destroyed.`);
+    // res.send();
+  });
+  console.log(`Cookie of ${userName} Cleared.`);
   res.send("logout success!");
   res.end();
 });
