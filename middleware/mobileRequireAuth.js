@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/userModel')
 
-const requireAuth = async (req, res, next) => {
+const mobileRequireAuth = async (req, res, next) => {
 
-  console.log('Tinawag ako. Ako si requireAuth.');
+  // res.header({"Access-Control-Allow-Origin": "*"});
 
   // verify user is authenticated
   const { authorization } = req.headers
@@ -26,4 +26,4 @@ const requireAuth = async (req, res, next) => {
   }
 }
 
-module.exports = requireAuth
+module.exports = mobileRequireAuth

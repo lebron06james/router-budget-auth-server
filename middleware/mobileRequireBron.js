@@ -1,9 +1,8 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 
-const requireChef = async (req, res, next) => {
-
-  console.log('Tinawag ako. Ako si requireChef.');
+const mobileRequireBron = async (req, res, next) => {
+  // res.header({"Access-Control-Allow-Origin": "*"});
 
   // verify user is authenticated
   const { authorization } = req.headers;
@@ -19,10 +18,10 @@ const requireChef = async (req, res, next) => {
 
     req.user = await User.findOne({ _id }).select("_id");
 
-    const _user = await User.findOne({ _id }).select("usertype");
+    const _user = await User.findOne({ _id }).select("username");
 
-    if (_user.usertype !== "Chef") {
-      return res.status(401).json({ error: "You are not allowed to make this request." });
+    if (_user.username !== "LeBron") {
+      return res.status(401).json({ error: "Nice try motherfucker!" });
     }
 
     next();
@@ -33,4 +32,4 @@ const requireChef = async (req, res, next) => {
   }
 };
 
-module.exports = requireChef;
+module.exports = mobileRequireBron;

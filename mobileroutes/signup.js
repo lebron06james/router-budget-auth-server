@@ -1,16 +1,13 @@
 const express = require('express')
 
 // controller functions
-const { signupUser } = require('../controllers/userController')
+const { signupUser } = require('../controllers/mobileUserController')
 
-const requireBron = require('../middleware/requireBron')
-
-const checkIsAuthAndAddTimestamp = require('../middleware/requireSession')
+const requireBron = require('../middleware/mobileRequireBron')
 
 const router = express.Router()
 
 // require auth for user signup route
-router.use(checkIsAuthAndAddTimestamp)
 router.use(requireBron)
 
 // signup route
@@ -23,7 +20,7 @@ module.exports = router
 // const express = require('express')
 
 // // controller functions
-// const { loginUser, signupUser } = require('../controllers/userController')
+// const { loginUser, signupUser } = require('../controllers/mobileUserController')
 
 // const router = express.Router()
 
