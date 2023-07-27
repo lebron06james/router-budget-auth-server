@@ -38,7 +38,7 @@ const PROD_ORIGINS = [
   "https://events-menu.vercel.app",
 ];
 
-// dev origins
+// dev | trash | stage origins
 const DEV_ORIGINS = [
   "https://stage-chef-recipe.vercel.app",
   "https://stage-menu-events.vercel.app",
@@ -51,9 +51,8 @@ const ORIGIN = process.env.IS_PROD === "Yes" ? PROD_ORIGINS : DEV_ORIGINS;
 
 // cors
 var corsOptions = {
-  // origin: "http://localhost:5173",
   origin: ORIGIN,
-  default: "https://stage-chef-recipe.vercel.app",
+  default: "https://recipe-chef.vercel.app",
   methods: ["POST", "PUT", "PATCH", "GET", "OPTIONS", "DELETE", "UPDATE", "HEAD"],
   credentials: true,
 };
@@ -75,7 +74,7 @@ app.use((req, res, next) => {
   //   "Access-Control-Allow-Origin",
   //   allowedOrigins.includes(origin) ? origin : "https://stage-chef-recipe.vercel.app"
   // );
-  res.header("Access-Control-Allow-Origin", allowedOrigins.includes(origin) ? origin : "https://stage-chef-recipe.vercel.app")
+  res.header("Access-Control-Allow-Origin", allowedOrigins.includes(origin) ? origin : "https://recipe-chef.vercel.app")
   res.header(
     "Access-Control-Allow-Methods",
     "GET, PUT, POST, PATCH, DELETE, OPTIONS"
@@ -112,7 +111,7 @@ redisClient.on("error", (err) =>
 redisClient.on("connect", () => console.log("Successfully connected to Redis"));
 
 // session store / cookie
-const secure_bool = process.env.IS_PROD === "Yes" || process.env.IS_PROD === "Stage";
+const secure_bool = process.env.IS_PROD === "Yes" || process.env.IS_PROD === "Stage" || process.env.IS_PROD === "Trash";
 app.use(
   session({
     store: new RedisStore({ client: redisClient, ttl: 43200 }), // seconds 12 hours
