@@ -44,6 +44,8 @@ const DEV_ORIGINS = [
   "https://stage-menu-events.vercel.app",
   "http://127.0.0.1:5173",
   "http://localhost:5173",
+  process.env.ADD_TRASH_SITE_I,
+  process.env.ADD_TRASH_SITE_II,
 ];
 
 // origin
