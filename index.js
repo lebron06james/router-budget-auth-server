@@ -114,6 +114,7 @@ redisClient.on("connect", () => console.log("Successfully connected to Redis"));
 
 // session store / cookie
 const secure_bool = process.env.IS_PROD === "Yes" || process.env.IS_PROD === "Stage" || process.env.IS_PROD === "Trash";
+const same_site_state = secure_bool ? "none" : "lax";
 app.use(
   session({
     store: new RedisStore({ client: redisClient, ttl: 43200 }), // seconds 12 hours
@@ -121,7 +122,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: secure_bool,
-      sameSite: "none",
+      sameSite: same_site_state,
       maxAge: 43200000, // milliseconds 12 hours
     },
     resave: false,
