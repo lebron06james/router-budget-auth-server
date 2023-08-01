@@ -16,8 +16,11 @@ const loginUser = async (req, res, next) => {
       // regenerate the session, which is good practice to help
       // guard against forms of session fixation
       req.session.regenerate(function (err) {
-        if (err) next(err);
-        // { return res.json({error: err}); }
+        // if (err) next(err);
+        if (err) {
+          console.log({regenerate_error: err});
+          return res.json({regenerate_error: err});
+        }
 
         // create a token
         const token = createToken(user._id);
@@ -48,16 +51,20 @@ const loginUser = async (req, res, next) => {
           // save the session before redirection to ensure page
           // load does not happen before session is saved
           req.session.save(function (err) {
-            if (err) return next(err);
+            // if (err) return next(err);
+            if (err) {
+              console.log({session_save_error: err});
+              return res.json({session_save_error: err});
+            }
             console.log('session saved.');
           });          
       
           res.status(200).json({ email, username, usertype, token });
           // res.json({ response, token });
         } catch (error) {
-          console.log(error);
+          console.log({create_session_error: error.message});
           // res.status(404);
-          res.send(error);
+          res.send({create_session_error: error.message});
         }
 
       });
@@ -65,7 +72,7 @@ const loginUser = async (req, res, next) => {
       res.status(400).json({ error: 'user not found' });
     }
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ user_login_error: error.message });
   }
 };
 
