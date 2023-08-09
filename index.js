@@ -14,6 +14,9 @@ const connectRedis = require("connect-redis");
 const sourcerecipegroupRoutes = require("./routes/sourcerecipegroups");
 const sourcerecipeRoutes = require("./routes/sourcerecipes");
 const sourceingredientRoutes = require("./routes/sourceingredients");
+const sourcecommentRoutes = require("./routes/sourcecomments");
+const venueRoutes = require("./routes/venues");
+const holdingroomRoutes = require("./routes/holdingrooms");
 const userRoutes = require("./routes/user");
 const userSignup = require("./routes/signup");
 
@@ -221,6 +224,11 @@ app.get("/logout", function (req, res) {
 app.use("/api/sourcerecipegroups", sourcerecipegroupRoutes);
 app.use("/api/sourcerecipes", sourcerecipeRoutes);
 app.use("/api/sourceingredients", sourceingredientRoutes);
+
+app.use("/api/sourcecomments", sourcecommentRoutes);
+app.use("/api/venues", venueRoutes);
+app.use("/api/holdingrooms", holdingroomRoutes);
+
 app.use("/api/user", userRoutes);
 app.use("/api/signup", userSignup);
 
