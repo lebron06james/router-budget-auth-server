@@ -1,14 +1,22 @@
-const express = require('express')
+const express = require("express");
 
 // controller functions
-const { loginUser } = require('../controllers/userController')
+const { loginUser, getUser } = require("../controllers/userController");
 
-const router = express.Router()
+const checkIsAuthAndAddTimestamp = require("../middleware/requireSession");
+const requireAuth = require("../middleware/requireAuth");
+
+const router = express.Router();
 
 // login route
-router.post('/login', loginUser)
+router.post("/login", loginUser);
 
-module.exports = router
+//GET a single user
+router.get("/:id", checkIsAuthAndAddTimestamp, requireAuth, (req, res) => {
+  getUser(req, res);
+});
+
+module.exports = router;
 
 // orig
 // const express = require('express')

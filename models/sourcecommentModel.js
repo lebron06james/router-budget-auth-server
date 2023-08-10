@@ -7,6 +7,10 @@ const sourcecommentSchema = new Schema({
     type: String,
     required: true
   },
+  recipegroupId: {
+    type: String,
+    required: true
+  },
   updatedby: {
     type: String,
     required: true
