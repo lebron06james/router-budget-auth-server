@@ -23,6 +23,7 @@
     "helmet": "^7.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.3.6",
+    "pocketbase": "^0.16.0",
     "redis": "^3.1.2",
     "validator": "^13.7.0"
   }

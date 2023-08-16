@@ -1,5 +1,7 @@
 require("dotenv").config();
 
+const PocketBase = require("pocketbase/cjs");
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
@@ -58,7 +60,16 @@ const ORIGIN = process.env.IS_PROD === "Yes" ? PROD_ORIGINS : DEV_ORIGINS;
 var corsOptions = {
   origin: ORIGIN,
   default: "https://recipe-chef.vercel.app",
-  methods: ["POST", "PUT", "PATCH", "GET", "OPTIONS", "DELETE", "UPDATE", "HEAD"],
+  methods: [
+    "POST",
+    "PUT",
+    "PATCH",
+    "GET",
+    "OPTIONS",
+    "DELETE",
+    "UPDATE",
+    "HEAD",
+  ],
   credentials: true,
 };
 
@@ -79,7 +90,10 @@ app.use((req, res, next) => {
   //   "Access-Control-Allow-Origin",
   //   allowedOrigins.includes(origin) ? origin : "https://stage-chef-recipe.vercel.app"
   // );
-  res.header("Access-Control-Allow-Origin", allowedOrigins.includes(origin) ? origin : "https://recipe-chef.vercel.app")
+  res.header(
+    "Access-Control-Allow-Origin",
+    allowedOrigins.includes(origin) ? origin : "https://recipe-chef.vercel.app"
+  );
   res.header(
     "Access-Control-Allow-Methods",
     "GET, PUT, POST, PATCH, DELETE, OPTIONS"
@@ -98,13 +112,13 @@ const redisClient =
   process.env.IS_PROD === "Yes" || process.env.IS_PROD === "Stage"
     ? redis.createClient({ url: process.env.REMOTE_REDIS_URL })
     : redis.createClient({
-      socket: {
-        host: "127.0.0.1",
-        port: 6379,
-      },
-      password: process.env.LOCAL_REDIS_PASS,
-      username: "default",
-    });
+        socket: {
+          host: "127.0.0.1",
+          port: 6379,
+        },
+        password: process.env.LOCAL_REDIS_PASS,
+        username: "default",
+      });
 
 // // Set up session store using Redis
 const RedisStore = connectRedis(session);
@@ -116,7 +130,10 @@ redisClient.on("error", (err) =>
 redisClient.on("connect", () => console.log("Successfully connected to Redis"));
 
 // session store / cookie
-const secure_bool = process.env.IS_PROD === "Yes" || process.env.IS_PROD === "Stage" || process.env.IS_PROD === "Trash";
+const secure_bool =
+  process.env.IS_PROD === "Yes" ||
+  process.env.IS_PROD === "Stage" ||
+  process.env.IS_PROD === "Trash";
 const same_site_state = secure_bool ? "none" : "lax";
 app.use(
   session({
@@ -201,20 +218,86 @@ app.get("/logout", function (req, res) {
   req.session.userName = null;
   req.session.isAuth = null;
   req.session.save(function (err) {
-    if (err) next(err)
+    if (err) next(err);
 
     // regenerate the session, which is good practice to help
     // guard against forms of session fixation
     req.session.regenerate(function (err) {
-      if (err) next(err)
+      if (err) next(err);
       console.log(`Session regenerated to avoid session fixation.`);
       req.session.destroy(function (err) {
         console.log(`Session of ${userName} Destroyed.`);
         res.send({ message: "logout success!" });
       });
-    })
-  })
+    });
+  });
+});
 
+app.get("/ka", function (req, res) {
+  res.send({ message: "success ka!" });
+});
+
+const cvUTC = async (dateStr) => {
+  // let MySQLDate = "2022-07-08 11:55:17";
+  let MySQLDate = dateStr;
+  // format the date string
+  let date = MySQLDate.replace(/[-]/g, "/");
+  // parse the proper date string from the formatted string.
+  date = Date.parse(date);
+  // create new date
+  let jsDate = new Date(date);
+
+  return jsDate;
+};
+
+app.get("/evroundone", async function (req, res) {
+  const data = req.body;
+
+  // teta
+  const eventdata = {
+    eventid: data.eventid || "",
+    name: data.name || "",
+    attire: data.attire || "",
+    description: data.description || "",
+    startdatetime: data.startdatetime || "2023-08-30 09:00",
+    enddatetime: data.enddatetime || "2023-08-30 10:00",
+    venue: data.venue || "",
+    entrancegate: data.entrancegate || entrancegate,
+  };
+  // teta
+
+  eventdata.startdatetime = await cvUTC(data.startdatetime);
+  eventdata.enddatetime = await cvUTC(data.enddatetime);
+
+  eventdata.pax = 0;
+  eventdata.holdingroom = "";
+  eventdata.dietaryrestrictions = "";
+  eventdata.updatedby = "Bron";
+
+  //
+  const pb = new PocketBase(process.env.PB_URI);
+
+  // gcas
+
+  // add doc to db
+  // try {
+
+  const authData = await pb
+    .collection("users")
+    .authWithPassword(process.env.PB_USR, process.env.PB_PSW);
+
+  if (!pb.authStore.isValid) {
+    res.status(400).json({ error: `Unable to create event record. Invalid credentials.` });
+  }
+  if (pb.authStore.isValid) {
+    const record = await pb.collection("events").create(eventdata);
+    res.status(200).json(record);
+  }
+
+  // } catch (error) {
+  //   res.status(400).json({ error: error.message });
+  // }
+  // gcas
 });
 
 // END TEST

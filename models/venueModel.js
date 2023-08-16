@@ -7,6 +7,10 @@ const venueSchema = new Schema({
     type: String,
     required: true
   },
+  color: {
+    type: String,
+    required: true
+  },
   updatedby: {
     type: String,
     required: true

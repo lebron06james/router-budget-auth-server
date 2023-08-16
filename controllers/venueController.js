@@ -29,7 +29,7 @@ const getVenue = async (req, res) => {
 
 // create new venue
 const createVenue = async (req, res) => {
-  const { name } = req.body
+  const { name, color } = req.body
 
   let emptyFields = []
 
@@ -43,7 +43,7 @@ const createVenue = async (req, res) => {
   // add doc to db
   try {
     const user_id = req.user._id
-    const venue = await Venue.create({name, updatedby: user_id})
+    const venue = await Venue.create({name, color, updatedby: user_id})
     res.status(200).json(venue)
   } catch (error) {
     res.status(400).json({error: error.message})
