@@ -11,6 +11,11 @@ const sourcecommentSchema = new Schema({
     type: String,
     required: true
   },
+  prompt: {
+    type: String,
+    required: true,
+    default: ''
+  },
   updatedby: {
     type: String,
     required: true

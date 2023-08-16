@@ -217,6 +217,10 @@ app.get("/logout", function (req, res) {
 
 });
 
+app.get("/ka", function (req, res) {
+  res.send({ message: "success ka!" });
+});
+
 // END TEST
 //// -----------------------------------
 

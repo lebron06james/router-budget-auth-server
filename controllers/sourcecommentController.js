@@ -44,7 +44,7 @@ const getSourceComment = async (req, res) => {
 
 // create new sourcecomment
 const createSourceComment = async (req, res) => {
-  const { name, recipegroupId } = req.body;
+  const { name, recipegroupId, prompt } = req.body;
 
   let emptyFields = [];
 
@@ -63,6 +63,7 @@ const createSourceComment = async (req, res) => {
     const sourcecomment = await SourceComment.create({
       name,
       recipegroupId,
+      prompt,
       updatedby: user_id,
     });
     res.status(200).json(sourcecomment);
