@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 // get all sourcerecipes
 const getSourceRecipes = async (req, res) => {
 
-  const sourcerecipes = await SourceRecipe.find({}).sort({name: -1})
+  const sourcerecipes = await SourceRecipe.find({}).sort({createdAt: -1})
 
   res.status(200).json(sourcerecipes)
 }
